@@ -1,4 +1,5 @@
 import os
+from flask import jsonify
 from datetime import datetime
 from flask import Flask, render_template, request, redirect
 import sqlite3
@@ -26,6 +27,8 @@ def init_db():
 
 init_db()
 
+
+
 @app.route("/", methods=["GET", "POST"])
 def chat():
     if request.method == "POST":
@@ -39,7 +42,10 @@ def chat():
                        (prompt, response, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             con.commit()
 
-        return redirect("/")
+        return jsonify({"response": response})
+
+    return render_template("chat.html")
+
 
     # Lade bisherigen Chatverlauf
     with sqlite3.connect("chatbot.db") as con:

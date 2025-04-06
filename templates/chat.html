@@ -1,20 +1,60 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dein KI-Chatbot 🤖</title>
+    <title>CS50 Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Frag mich was!</h1>
-    <form method="post">
-        <input name="prompt" placeholder="Schreib etwas..." required>
-        <button type="submit">Senden</button>
-    </form>
-    <hr>
-    {% for prompt, response, timestamp in messages %}
-        <p><strong>Du ({{ timestamp }}):</strong> {{ prompt }}</p>
-        <p><strong>Bot:</strong> {{ response }}</p>
-        <hr>
-    {% endfor %}
+    <div class="chat-container">
+        <!-- Chat-Verlauf -->
+        <div id="chat-box" class="chat-box"></div>
+
+        <!-- Eingabeformular -->
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="prompt" placeholder="Frag mich was..." required>
+            <button type="submit">Senden</button>
+        </form>
+    </div>
+
+    <!-- Dein JavaScript kommt HIER in das <script>-Tag -->
+    <script>
+        // DOM-Elemente referenzieren
+        const form = document.getElementById("chat-form");
+        const chatBox = document.getElementById("chat-box");
+        const promptInput = document.getElementById("prompt");
+
+        // EventListener für das Formular
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const prompt = promptInput.value;
+
+            // User-Blase erstellen
+            const userMsg = document.createElement("div");
+            userMsg.classList.add("msg", "user");
+            userMsg.textContent = prompt;
+            chatBox.appendChild(userMsg);
+
+            promptInput.value = "";
+
+            // Bot-Antwort holen
+            const res = await fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `prompt=${encodeURIComponent(prompt)}`
+            });
+            const data = await res.json();
+
+            // Bot-Blase erstellen
+            const botMsg = document.createElement("div");
+            botMsg.classList.add("msg", "bot");
+            botMsg.textContent = data.response;
+            chatBox.appendChild(botMsg);
+
+            // Scroll nach unten
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
 </body>
 </html>
