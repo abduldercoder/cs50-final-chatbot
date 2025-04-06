@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dein KI-Chatbot 🤖</title>
+</head>
+<body>
+    <h1>Frag mich was!</h1>
+    <form method="post">
+        <input name="prompt" placeholder="Schreib etwas..." required>
+        <button type="submit">Senden</button>
+    </form>
+    <hr>
+    {% for prompt, response, timestamp in messages %}
+        <p><strong>Du ({{ timestamp }}):</strong> {{ prompt }}</p>
+        <p><strong>Bot:</strong> {{ response }}</p>
+        <hr>
+    {% endfor %}
+</body>
+</html>
